@@ -3,3 +3,18 @@
 .DS_Store
 .idea
 .vscode/settings.json
+
+# Generated logos (exclude from repo)
+/*.png
+/*.svg
+/examples/*.png
+/examples/*.svg
+
+# Assets (fonts - downloaded via setup script)
+/assets/fonts/*.ttf
+/assets/fonts/*.otf
+
+# Keep asset structure and documentation
+!/assets/
+!/assets/fonts/
+!/assets/fonts/README.md

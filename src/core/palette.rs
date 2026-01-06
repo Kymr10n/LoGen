@@ -34,11 +34,21 @@ impl Rgb {
 /// Minimal HSL->RGB conversion. Good enough for stubs.
 pub fn hsl_to_rgb(h: f32, s: f32, l: f32) -> Rgb {
     fn hue_to_rgb(p: f32, q: f32, mut t: f32) -> f32 {
-        if t < 0.0 { t += 1.0; }
-        if t > 1.0 { t -= 1.0; }
-        if t < 1.0/6.0 { return p + (q - p) * 6.0 * t; }
-        if t < 1.0/2.0 { return q; }
-        if t < 2.0/3.0 { return p + (q - p) * (2.0/3.0 - t) * 6.0; }
+        if t < 0.0 {
+            t += 1.0;
+        }
+        if t > 1.0 {
+            t -= 1.0;
+        }
+        if t < 1.0 / 6.0 {
+            return p + (q - p) * 6.0 * t;
+        }
+        if t < 1.0 / 2.0 {
+            return q;
+        }
+        if t < 2.0 / 3.0 {
+            return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+        }
         p
     }
 
@@ -51,12 +61,16 @@ pub fn hsl_to_rgb(h: f32, s: f32, l: f32) -> Rgb {
         return Rgb { r: v, g: v, b: v };
     }
 
-    let q = if l < 0.5 { l * (1.0 + s) } else { l + s - l * s };
+    let q = if l < 0.5 {
+        l * (1.0 + s)
+    } else {
+        l + s - l * s
+    };
     let p = 2.0 * l - q;
 
-    let r = hue_to_rgb(p, q, h + 1.0/3.0);
+    let r = hue_to_rgb(p, q, h + 1.0 / 3.0);
     let g = hue_to_rgb(p, q, h);
-    let b = hue_to_rgb(p, q, h - 1.0/3.0);
+    let b = hue_to_rgb(p, q, h - 1.0 / 3.0);
 
     Rgb {
         r: (r * 255.0).round() as u8,
@@ -82,7 +96,7 @@ pub fn derive_palette<R: Rng>(rng: &mut R, transparent_background: bool) -> Pale
     let secondary = hsl_to_rgb(
         hue + rng.gen_range(MIN_HUE_OFFSET..MAX_HUE_OFFSET),
         (s * SECONDARY_SATURATION_FACTOR).clamp(0.0, 1.0),
-        (l * SECONDARY_LIGHTNESS_FACTOR).clamp(0.0, 1.0)
+        (l * SECONDARY_LIGHTNESS_FACTOR).clamp(0.0, 1.0),
     );
 
     let background = if transparent_background {
@@ -91,9 +105,13 @@ pub fn derive_palette<R: Rng>(rng: &mut R, transparent_background: bool) -> Pale
         Some(hsl_to_rgb(
             hue + BACKGROUND_HUE_OFFSET,
             rng.gen_range(MIN_BACKGROUND_SATURATION..MAX_BACKGROUND_SATURATION),
-            rng.gen_range(MIN_BACKGROUND_LIGHTNESS..MAX_BACKGROUND_LIGHTNESS)
+            rng.gen_range(MIN_BACKGROUND_LIGHTNESS..MAX_BACKGROUND_LIGHTNESS),
         ))
     };
 
-    Palette { background, primary, secondary }
+    Palette {
+        background,
+        primary,
+        secondary,
+    }
 }

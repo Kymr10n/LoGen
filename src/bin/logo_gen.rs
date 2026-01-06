@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
-use logo_gen::{LogoGenerator, Preset, RenderOptions, OutputFormat};
+use logo_gen::{LogoGenerator, OutputFormat, Preset, RenderOptions};
 
 #[derive(Debug, Clone, ValueEnum)]
 enum FormatArg {

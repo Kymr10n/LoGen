@@ -1,16 +1,39 @@
 # logo_gen (Rust) — Project Stub
 
+![CI](https://github.com/YOUR_USERNAME/LoGen/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/LoGen/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/LoGen)
+
 Deterministic logo generation from an input string with pluggable algorithms ("presets").
 
-This stub compiles and produces:
-- **SVG** output (vector-first, minimal scene graph)
-- **PNG** output (placeholder raster renderer; currently background + simple mark)
+**Note**: Font assets are not included in the repository. Run `./setup-assets.sh` to download them before building.
 
-The focus is **architecture and extensibility**. Visual fidelity will be implemented incrementally.
+This stub compiles and produces:
+- **SVG** output (vector-first, clean XML)
+- **PNG** output (full raster renderer with embedded fonts and text rendering)
+
+Key features:
+- ✅ Deterministic generation (same input = same output)
+- ✅ Full text rendering with embedded Roboto Bold font
+- ✅ Rounded rectangles and circles with antialiasing
+- ✅ Color palette derivation from HSL
+- ✅ Monogram/initial extraction from input strings
+- ✅ Variant support for generating alternatives
+
+The focus is **architecture and extensibility**. Visual fidelity is functional and will be enhanced incrementally.
 
 ## Requirements
 - Rust stable (edition 2021)
 - No system libraries required
+- Font assets (automatically downloaded via setup script)
+
+## Setup
+
+First, download required font assets:
+```bash
+./setup-assets.sh
+```
+
+This will download the Roboto Bold font (~168KB) used for text rendering.
 
 ## Build
 ```bash
@@ -18,7 +41,23 @@ cargo build
 ```
 
 ## Run (CLI)
-Generate SVG:
+Gen
+
+Generate with transparent background:
+```bash
+cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512 --transparent
+```
+
+Generate variants (same input, different outputs):
+```bash
+cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v1.png --size 512 --variant 1
+cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v2.png --size 512 --variant 2
+```
+
+Run demo script:
+```bash
+./generate_examples.sh
+```erate SVG:
 ```bash
 cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
 ```
@@ -32,6 +71,38 @@ cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --forma
 - **Visual Studio Code**: install *rust-analyzer* extension.
 - **Visual Studio 2022**: use the Rust tooling/extension of your choice; the project is standard Cargo.
   - Open the folder; `cargo build`/`cargo test` drive the build.
+
+## Testing
+
+Run tests:
+```bash
+cargo test
+```
+
+Run with coverage (requires `cargo-tarpaulin`):
+```bash
+cargo install cargo-tarpaulin
+cargo tarpaulin --verbose --all-features --workspace --timeout 120
+```
+
+## Pre-commit Hooks
+
+The repository includes a pre-commit hook that automatically runs tests, clippy, and format checks before each commit. 
+
+**Important**: Run `./setup-assets.sh` before your first commit to ensure fonts are available for tests.
+
+To bypass the hook (not recommended):
+```bash
+git commit --no-verify
+```
+
+## Continuous Integration
+
+GitHub Actions CI runs on every push and pull request:
+- ✅ Tests on Linux, macOS, and Windows
+- ✅ Clippy linting with warnings as errors
+- ✅ Code formatting checks
+- ✅ Code coverage reporting
 
 ## Roadmap
 See `docs/issue_list.md` for a suggested GitHub issue breakdown.

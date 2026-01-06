@@ -1,9 +1,13 @@
-use crate::{LogoGenError, RenderOptions};
-use crate::algorithms::{Scene, DrawOp};
+use crate::algorithms::{DrawOp, Scene};
 use crate::core::geometry::Shape;
+use crate::{LogoGenError, RenderOptions};
 
 fn esc(s: &str) -> String {
-    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;").replace('\'', "&apos;")
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;")
 }
 
 pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGenError> {
@@ -22,7 +26,10 @@ pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGe
         match op {
             DrawOp::Background { color } => {
                 if let Some(c) = color {
-                    out.push_str(&format!(r#"<rect x="0" y="0" width="{w}" height="{h}" fill="{}"/>"#, c.to_hex()));
+                    out.push_str(&format!(
+                        r#"<rect x="0" y="0" width="{w}" height="{h}" fill="{}"/>"#,
+                        c.to_hex()
+                    ));
                     out.push('\n');
                 }
             }
@@ -30,7 +37,10 @@ pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGe
                 Shape::Circle(circ) => {
                     out.push_str(&format!(
                         r#"<circle cx="{:.2}" cy="{:.2}" r="{:.2}" fill="{}"/>"#,
-                        circ.cx, circ.cy, circ.r, color.to_hex()
+                        circ.cx,
+                        circ.cy,
+                        circ.r,
+                        color.to_hex()
                     ));
                     out.push('\n');
                 }
@@ -42,7 +52,16 @@ pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGe
                     out.push('\n');
                 }
             },
-            DrawOp::Text { text, x, y, font_family, font_weight, font_size, color, anchor_middle } => {
+            DrawOp::Text {
+                text,
+                x,
+                y,
+                font_family,
+                font_weight,
+                font_size,
+                color,
+                anchor_middle,
+            } => {
                 let anchor = if *anchor_middle { "middle" } else { "start" };
                 out.push_str(&format!(
                     r#"<text x="{:.2}" y="{:.2}" text-anchor="{anchor}" font-family="{}" font-weight="{}" font-size="{:.2}" fill="{}">{}</text>"#,

@@ -98,7 +98,11 @@ impl LogoGenerator {
     ///
     /// # Returns
     /// SVG as a UTF-8 string, or an error if generation fails.
-    pub fn generate_svg(input: &str, preset: Preset, opts: &RenderOptions) -> Result<String, LogoGenError> {
+    pub fn generate_svg(
+        input: &str,
+        preset: Preset,
+        opts: &RenderOptions,
+    ) -> Result<String, LogoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
         render::svg::render_svg(&scene, opts)
     }
@@ -112,7 +116,11 @@ impl LogoGenerator {
     ///
     /// # Returns
     /// PNG data as bytes, or an error if generation fails.
-    pub fn generate_png(input: &str, preset: Preset, opts: &RenderOptions) -> Result<Vec<u8>, LogoGenError> {
+    pub fn generate_png(
+        input: &str,
+        preset: Preset,
+        opts: &RenderOptions,
+    ) -> Result<Vec<u8>, LogoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
         render::png::render_png(&scene, opts)
     }

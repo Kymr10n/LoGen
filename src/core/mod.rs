@@ -6,7 +6,7 @@
 //! - Typography utilities
 //! - Geometric primitives
 
-pub mod seed;
-pub mod palette;
-pub mod typography;
 pub mod geometry;
+pub mod palette;
+pub mod seed;
+pub mod typography;
