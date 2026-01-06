@@ -1,0 +1,27 @@
+[package]
+name = "logo_gen"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Deterministic logo generator (PNG + SVG) from an input string. Project stub."
+repository = "https://example.invalid/replace-me"
+readme = "README.md"
+
+[lib]
+name = "logo_gen"
+path = "src/lib.rs"
+
+[[bin]]
+name = "logo-gen"
+path = "src/bin/logo_gen.rs"
+
+[dependencies]
+blake3 = "1.5"
+rand = "0.8"
+rand_chacha = "0.3"
+thiserror = "1.0"
+image = { version = "0.25", default-features = false, features = ["png"] }
+clap = { version = "4.5", features = ["derive"] }
+
+[dev-dependencies]
+pretty_assertions = "1.4"
