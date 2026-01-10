@@ -12,7 +12,7 @@ struct GenerateRequest {
     transparent_background: Option<bool>,
 }
 
-fn header(k: &'static [u8], v: &'static [u8]) -> tiny_http::Header {
+fn header(k: &[u8], v: &[u8]) -> tiny_http::Header {
     tiny_http::Header::from_bytes(k, v).unwrap()
 }
 

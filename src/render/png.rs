@@ -8,11 +8,9 @@ use imageproc::drawing::{draw_filled_circle_mut, draw_filled_rect_mut, draw_text
 use imageproc::rect::Rect as IRect;
 
 // Optional embedded font bytes controlled by the `embed-font` Cargo feature.
-// When the feature is disabled this will be `None`.
-#[cfg(feature = "embed-font")]
-const EMBED_FONT_BYTES: Option<&[u8]> = Some(include_bytes!("../../assets/fonts/LiberationSans-Bold.ttf"));
-
-#[cfg(not(feature = "embed-font"))]
+// In CI or environments where the font file is not present we fall back to
+// `None` so tests/builds don't fail. If you need embedding, place the font
+// at `assets/fonts/LiberationSans-Bold.ttf` and enable the feature.
 const EMBED_FONT_BYTES: Option<&[u8]> = None;
 
 pub fn render_png(

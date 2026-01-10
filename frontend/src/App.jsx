@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 export default function App() {
   const [seed, setSeed] = useState('example')
-  const [format, setFormat] = useState('png')
+  const [format, setFormat] = useState('svg')
   const [preset, setPreset] = useState('monogram-badge')
   const [size, setSize] = useState(512)
   const [padding, setPadding] = useState(0.12)

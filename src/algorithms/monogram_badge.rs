@@ -21,12 +21,24 @@ const MAX_FONT_SIZE: f32 = 0.62;
 const TEXT_BASELINE_ADJUST: f32 = 0.35;
 
 fn initials_from_normalized(s: &str) -> String {
-    // Take first letter of first and second "word" if available, else first two alnum chars.
+    // If input contains multiple words, take the first alnum letter of the
+    // first two words (classic initials). If the input is a single word,
+    // include up to three alphanumeric characters from that word (so
+    // e.g. "ABR" becomes "ABR"). Fallback to first two alnum chars or
+    // "?" if nothing is available.
     let words: Vec<&str> = s.split(' ').filter(|w| !w.is_empty()).collect();
     let mut init = String::new();
 
-    for w in words.iter().take(2) {
-        if let Some(ch) = w.chars().find(|c| c.is_alphanumeric()) {
+    if words.len() >= 2 {
+        for w in words.iter().take(2) {
+            if let Some(ch) = w.chars().find(|c| c.is_alphanumeric()) {
+                init.push(ch);
+            }
+        }
+    } else {
+        // Single-word: include up to 3 alphanumeric characters from the
+        // normalized string to preserve short names like "ABR".
+        for ch in s.chars().filter(|c| c.is_alphanumeric()).take(3) {
             init.push(ch);
         }
     }
