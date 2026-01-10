@@ -77,6 +77,12 @@ jobs:
         with:
           files: ./cobertura.xml
           fail_ci_if_error: true
+      
+      - name: Configure git for Codecov
+        if: always()
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
 
   build:
     name: Build
