@@ -6,6 +6,7 @@
 pub mod algorithms;
 pub mod core;
 pub mod render;
+pub mod cli;
 
 use thiserror::Error;
 
@@ -150,5 +151,33 @@ impl LogoGenerator {
     ) -> Result<Vec<u8>, LogoGenError> {
         let fb_ref = font_bytes.as_deref();
         Self::generate_png_with_font(input, preset, opts, fb_ref)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn preset_from_str_known() {
+        let p: Preset = "monogram-badge".parse().expect("parse preset");
+        match p {
+            Preset::MonogramBadge => {}
+        }
+    }
+
+    #[test]
+    fn preset_from_str_unknown() {
+        let r: Result<Preset, _> = "no-such-preset".parse();
+        assert!(r.is_err());
+    }
+    #[test]
+    fn generate_svg_and_png_ok() {
+        let opts = RenderOptions::default();
+        let svg = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        assert!(svg.contains("<svg") || svg.contains("<svg"), "svg should contain svg tag");
+
+        let png = LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        assert!(!png.is_empty(), "png bytes should not be empty");
     }
 }

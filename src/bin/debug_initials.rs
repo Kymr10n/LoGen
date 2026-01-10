@@ -1,4 +1,5 @@
 use logo_gen::{algorithms, Preset, RenderOptions};
+use logo_gen::cli::debug_initials_svg;
 
 fn main() {
     let input = "ABR";
@@ -9,33 +10,14 @@ fn main() {
         transparent_background: false,
     };
 
-    match algorithms::build_scene(input, Preset::MonogramBadge, &opts) {
-        Ok(scene) => {
-            println!("Scene width={} height={}", scene.width, scene.height);
-            for op in scene.ops.iter() {
-                if let logo_gen::algorithms::DrawOp::Text {
-                    text,
-                    x,
-                    y,
-                    font_size,
-                    ..
-                } = op
-                {
-                    println!("Text op: '{}' @ ({},{}) size={}", text, x, y, font_size);
+    match debug_initials_svg(input, &opts) {
+        Ok(svg) => {
+            for line in svg.lines() {
+                if line.contains("<text ") {
+                    println!("SVG text line: {}", line);
                 }
-            }
-            // Render SVG and print the exact <text> line
-            match logo_gen::render::svg::render_svg(&scene, &opts) {
-                Ok(svg) => {
-                    for line in svg.lines() {
-                        if line.contains("<text ") {
-                            println!("SVG text line: {}", line);
-                        }
-                    }
-                }
-                Err(e) => eprintln!("SVG render error: {}", e),
             }
         }
-        Err(e) => eprintln!("Error building scene: {}", e),
+        Err(e) => eprintln!("Error: {}", e),
     }
 }

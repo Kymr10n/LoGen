@@ -56,6 +56,45 @@ fn initials_from_normalized(s: &str) -> String {
     init.to_uppercase()
 }
 
+#[cfg(test)]
+mod tests {
+    use super::initials_from_normalized;
+    use super::build;
+    use crate::RenderOptions;
+    use rand_chacha::ChaCha8Rng;
+    use rand::SeedableRng;
+
+    #[test]
+    fn initials_multiple_words() {
+        let s = "Alice Bob";
+        assert_eq!(initials_from_normalized(s), "AB");
+    }
+
+    #[test]
+    fn initials_single_word_three_chars() {
+        let s = "abr";
+        assert_eq!(initials_from_normalized(s), "ABR");
+    }
+
+    #[test]
+    fn initials_no_alnum() {
+        let s = "!! --";
+        assert_eq!(initials_from_normalized(s), "?");
+    }
+
+    #[test]
+    fn build_returns_scene_with_text() {
+        let mut rng = ChaCha8Rng::seed_from_u64(123);
+        let opts = RenderOptions { size_px: 128, padding_frac: 0.1, variant: None, transparent_background: false };
+        let scene = build("Alice", &mut rng, &opts).expect("build failed");
+        // there should be a text op present and the width/height match
+        assert_eq!(scene.width, 128);
+        assert_eq!(scene.height, 128);
+        let has_text = scene.ops.iter().any(|op| matches!(op, crate::algorithms::DrawOp::Text { .. }));
+        assert!(has_text, "expected a Text draw op in the scene");
+    }
+}
+
 /// Simple "Monogram Badge" preset: rounded rect + initials.
 /// All choices are deterministic via the supplied RNG.
 pub fn build<R: Rng>(
