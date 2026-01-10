@@ -2,21 +2,48 @@ use crate::algorithms::{DrawOp, Scene};
 use crate::core::geometry::Shape;
 use crate::{LogoGenError, RenderOptions};
 use ab_glyph::{FontRef, PxScale};
+use std::path::Path;
 use image::{ImageEncoder, Rgba, RgbaImage};
 use imageproc::drawing::{draw_filled_circle_mut, draw_filled_rect_mut, draw_text_mut};
 use imageproc::rect::Rect as IRect;
 
-const FONT_DATA: &[u8] = include_bytes!("../../assets/fonts/LiberationSans-Bold.ttf");
+// Optional embedded font bytes controlled by the `embed-font` Cargo feature.
+// When the feature is disabled this will be `None`.
+#[cfg(feature = "embed-font")]
+const EMBED_FONT_BYTES: Option<&[u8]> = Some(include_bytes!("../../assets/fonts/LiberationSans-Bold.ttf"));
 
-pub fn render_png(scene: &Scene, _opts: &RenderOptions) -> Result<Vec<u8>, LogoGenError> {
+#[cfg(not(feature = "embed-font"))]
+const EMBED_FONT_BYTES: Option<&[u8]> = None;
+
+pub fn render_png(
+    scene: &Scene,
+    _opts: &RenderOptions,
+    font_bytes: Option<&[u8]>,
+) -> Result<Vec<u8>, LogoGenError> {
     let mut img = RgbaImage::new(scene.width, scene.height);
 
     for px in img.pixels_mut() {
         *px = Rgba([0, 0, 0, 0]);
     }
 
-    let font = FontRef::try_from_slice(FONT_DATA)
-        .map_err(|e| LogoGenError::Render(format!("Failed to load embedded font: {}", e)))?;
+    // Determine font to use: prefer `font_bytes` passed by caller (already
+    // leaked to 'static), otherwise attempt to load a runtime font from
+    // `assets/fonts/`, falling back to the embedded bytes if available.
+    let font = if let Some(bytes) = font_bytes {
+        FontRef::try_from_slice(bytes).ok()
+    } else {
+        let runtime_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("assets/fonts/LiberationSans-Bold.ttf");
+        if let Ok(bytes) = std::fs::read(&runtime_path) {
+            // Leak the bytes so we can obtain a &'static slice for FontRef.
+            let boxed = bytes.into_boxed_slice();
+            let leaked: &'static [u8] = Box::leak(boxed);
+            FontRef::try_from_slice(leaked)
+                .ok()
+                .or_else(|| EMBED_FONT_BYTES.and_then(|b| FontRef::try_from_slice(b).ok()))
+        } else {
+            EMBED_FONT_BYTES.and_then(|b| FontRef::try_from_slice(b).ok())
+        }
+    };
 
     for op in &scene.ops {
         match op {
@@ -66,15 +93,18 @@ pub fn render_png(scene: &Scene, _opts: &RenderOptions) -> Result<Vec<u8>, LogoG
                 anchor_middle,
                 ..
             } => {
-                let scale = PxScale::from(*font_size);
-                let rgba = Rgba([color.r, color.g, color.b, 255]);
-                let (text_x, text_y) = if *anchor_middle {
-                    let text_width = measure_text_width(&font, scale, text);
-                    ((x - text_width / 2.0) as i32, (y - font_size * 0.35) as i32)
-                } else {
-                    (*x as i32, *y as i32)
-                };
-                draw_text_mut(&mut img, rgba, text_x, text_y, scale, &font, text);
+                // If font failed to load, skip drawing text rather than erroring
+                if let Some(ref font) = font {
+                    let scale = PxScale::from(*font_size);
+                    let rgba = Rgba([color.r, color.g, color.b, 255]);
+                    let (text_x, text_y) = if *anchor_middle {
+                        let text_width = measure_text_width(&font, scale, text);
+                        ((x - text_width / 2.0) as i32, (y - font_size * 0.35) as i32)
+                    } else {
+                        (*x as i32, *y as i32)
+                    };
+                    draw_text_mut(&mut img, rgba, text_x, text_y, scale, &font, text);
+                }
             }
         }
     }

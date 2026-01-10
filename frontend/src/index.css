@@ -1,0 +1,18 @@
+/* Minimal styles for the demo frontend */
+body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial }
+.app-root { padding: 20px }
+header h1 { margin: 0 0 12px 0 }
+.two-col { display: flex; gap: 20px; align-items: flex-start }
+.params { width: 340px; }
+.params label { display: block; margin-top: 12px; font-weight: 600 }
+.params input[type="text"], .params input[type="number"], .params select { width: 100%; padding: 6px 8px; box-sizing: border-box }
+.params input[type="range"] { width: 100% }
+.checkbox { display: flex; align-items: center; gap: 8px; margin-top: 8px }
+.params button { padding: 8px 12px; font-size: 14px }
+.result { flex: 1 }
+.result-box { width: 100%; min-height: 320px; border: 1px solid #ddd; display:flex; align-items:center; justify-content:center; background: #fafafa }
+.result-box img { max-width: 100%; max-height: 80vh }
+.placeholder { color: #888 }
+
+input { padding: 6px 8px; font-size: 14px }
+button { padding: 6px 10px; font-size: 14px }

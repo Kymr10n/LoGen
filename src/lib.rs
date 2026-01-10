@@ -122,6 +122,33 @@ impl LogoGenerator {
         opts: &RenderOptions,
     ) -> Result<Vec<u8>, LogoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
-        render::png::render_png(&scene, opts)
+        // Forward to the new API that accepts an optional embedded font.
+        render::png::render_png(&scene, opts, None)
+    }
+
+    /// Generate a PNG logo, allowing the caller to provide optional font bytes
+    /// (as a `'static` slice). If `font_bytes` is `None`, the renderer will
+    /// attempt to load a runtime font from `assets/fonts/` or fall back to the
+    /// embedded font if available.
+    pub fn generate_png_with_font(
+        input: &str,
+        preset: Preset,
+        opts: &RenderOptions,
+        font_bytes: Option<&[u8]>,
+    ) -> Result<Vec<u8>, LogoGenError> {
+        let scene = algorithms::build_scene(input, preset, opts)?;
+        render::png::render_png(&scene, opts, font_bytes)
+    }
+
+    /// Generate a PNG logo accepting owned font bytes. The owned `Vec<u8>` is
+    /// borrowed for the duration of the call, avoiding leaking memory.
+    pub fn generate_png_with_owned_font(
+        input: &str,
+        preset: Preset,
+        opts: &RenderOptions,
+        font_bytes: Option<Vec<u8>>,
+    ) -> Result<Vec<u8>, LogoGenError> {
+        let fb_ref = font_bytes.as_deref();
+        Self::generate_png_with_font(input, preset, opts, fb_ref)
     }
 }

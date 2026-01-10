@@ -1,0 +1,13 @@
+{
+  "package": {
+    "productName": "logo_gen_gui",
+    "version": "0.1.0"
+  },
+  "build": {
+    "distDir": "../frontend/dist",
+    "devPath": "http://localhost:5173"
+  },
+  "tauri": {
+    "bundle": {}
+  }
+}

@@ -27,3 +27,10 @@ ab_glyph = "0.2"
 
 [dev-dependencies]
 pretty_assertions = "1.4"
+
+[features]
+# When `embed-font` is enabled (default), the LiberationSans font bytes are
+# compiled into the library via `include_bytes!`. Disable this feature to
+# force runtime font loading only.
+default = ["embed-font"]
+embed-font = []
