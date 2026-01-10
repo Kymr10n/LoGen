@@ -58,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,8 +76,19 @@ jobs:
       - name: Generate coverage
         run: cargo tarpaulin --verbose --all-features --workspace --timeout 120 --out xml
 
+      - name: Verify Codecov token exists
+        run: |
+          if [ -z "${CODECOV_TOKEN}" ]; then
+            echo "ERROR: CODECOV_TOKEN is not set or empty. Set the repository secret CODECOV_TOKEN to your Codecov project upload token." >&2
+            exit 1
+          else
+            echo "Codecov token appears set (masked)."
+          fi
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cobertura.xml
