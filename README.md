@@ -1,4 +1,4 @@
-# logo_gen (Rust) — Project Stub
+# LoGen (Rust) — Project Stub
 
 ![CI](https://github.com/YOUR_USERNAME/LoGen/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/YOUR_USERNAME/LoGen/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/LoGen)
