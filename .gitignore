@@ -1,12 +1,35 @@
-/target
-**/*.swp
+# Rust build/output
+target/
+**/target/
+
+# Editor/temp
+*.swp
 .DS_Store
-.idea
-.vscode/settings.json
+.idea/
+.vscode/
+
+# Node / frontend
+node_modules/
+**/node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+dist/
+/.parcel-cache/
+/.turbo/
+
+# Environment
+.env
+.env.local
+
+# Logs / temp
+*.log
+*.tmp
 
 # Generated logos (exclude from repo)
-/*.png
-/*.svg
+/**/*.png
+/**/*.svg
 /examples/*.png
 /examples/*.svg
 
