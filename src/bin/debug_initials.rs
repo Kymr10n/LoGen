@@ -13,11 +13,15 @@ fn main() {
         Ok(scene) => {
             println!("Scene width={} height={}", scene.width, scene.height);
             for op in scene.ops.iter() {
-                match op {
-                    logo_gen::algorithms::DrawOp::Text { text, x, y, font_size, .. } => {
-                        println!("Text op: '{}' @ ({},{}) size={}", text, x, y, font_size);
-                    }
-                    _ => {}
+                if let logo_gen::algorithms::DrawOp::Text {
+                    text,
+                    x,
+                    y,
+                    font_size,
+                    ..
+                } = op
+                {
+                    println!("Text op: '{}' @ ({},{}) size={}", text, x, y, font_size);
                 }
             }
             // Render SVG and print the exact <text> line
