@@ -1,7 +1,7 @@
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
-use crate::{LogoGenerator, OutputFormat, Preset, RenderOptions, LogoGenError};
+use crate::{LogoGenError, LogoGenerator, OutputFormat, Preset, RenderOptions};
 
 /// Write a generated logo to `out_path` using provided format and options.
 pub fn write_logo_file(
@@ -41,7 +41,14 @@ mod tests {
         let opts = RenderOptions::default();
         let out = env::temp_dir().join("logen_test_out.svg");
         let _ = fs::remove_file(&out);
-        write_logo_file("TestSVG", Preset::MonogramBadge, OutputFormat::Svg, &out, &opts).expect("write svg");
+        write_logo_file(
+            "TestSVG",
+            Preset::MonogramBadge,
+            OutputFormat::Svg,
+            &out,
+            &opts,
+        )
+        .expect("write svg");
         let s = fs::read_to_string(&out).expect("read svg");
         assert!(s.contains("<svg"));
         let _ = fs::remove_file(&out);

@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
-use logo_gen::{OutputFormat, Preset, RenderOptions};
 use logo_gen::cli::write_logo_file;
+use logo_gen::{OutputFormat, Preset, RenderOptions};
 
 #[derive(Debug, Clone, ValueEnum)]
 enum FormatArg {
@@ -68,7 +68,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         transparent_background: args.transparent,
     };
 
-    write_logo_file(&args.input, preset, OutputFormat::from(args.format), &args.out, &opts)?;
+    write_logo_file(
+        &args.input,
+        preset,
+        OutputFormat::from(args.format),
+        &args.out,
+        &opts,
+    )?;
 
     Ok(())
 }

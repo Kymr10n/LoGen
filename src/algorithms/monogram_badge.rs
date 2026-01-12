@@ -128,11 +128,11 @@ pub fn build<R: Rng>(
 
 #[cfg(test)]
 mod tests {
-    use super::initials_from_normalized;
     use super::build;
+    use super::initials_from_normalized;
     use crate::RenderOptions;
-    use rand_chacha::ChaCha8Rng;
     use rand::SeedableRng;
+    use rand_chacha::ChaCha8Rng;
 
     #[test]
     fn initials_multiple_words() {
@@ -155,12 +155,20 @@ mod tests {
     #[test]
     fn build_returns_scene_with_text() {
         let mut rng = ChaCha8Rng::seed_from_u64(123);
-        let opts = RenderOptions { size_px: 128, padding_frac: 0.1, variant: None, transparent_background: false };
+        let opts = RenderOptions {
+            size_px: 128,
+            padding_frac: 0.1,
+            variant: None,
+            transparent_background: false,
+        };
         let scene = build("Alice", &mut rng, &opts).expect("build failed");
         // there should be a text op present and the width/height match
         assert_eq!(scene.width, 128);
         assert_eq!(scene.height, 128);
-        let has_text = scene.ops.iter().any(|op| matches!(op, crate::algorithms::DrawOp::Text { .. }));
+        let has_text = scene
+            .ops
+            .iter()
+            .any(|op| matches!(op, crate::algorithms::DrawOp::Text { .. }));
         assert!(has_text, "expected a Text draw op in the scene");
     }
 }

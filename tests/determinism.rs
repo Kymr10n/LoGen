@@ -70,7 +70,7 @@ fn same_input_different_sizes_consistent() {
     let a2 = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_256).unwrap();
     let b1 = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_512).unwrap();
     let b2 = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_512).unwrap();
-    
+
     // Same size should be identical
     assert_eq!(a1, a2);
     assert_eq!(b1, b2);
@@ -85,12 +85,13 @@ fn transparency_setting_changes_output() {
         ..Default::default()
     };
     let opaque = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_opaque).unwrap();
-    
+
     let opts_transparent = RenderOptions {
         transparent_background: true,
         ..Default::default()
     };
-    let transparent = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_transparent).unwrap();
-    
+    let transparent =
+        LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts_transparent).unwrap();
+
     assert_ne!(opaque, transparent);
 }

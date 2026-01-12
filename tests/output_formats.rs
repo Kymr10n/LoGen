@@ -122,7 +122,9 @@ fn test_png_different_sizes_different_output() {
         size_px: 512,
         ..Default::default()
     };
-    let png_small = LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts_small).unwrap();
-    let png_large = LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts_large).unwrap();
+    let png_small =
+        LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts_small).unwrap();
+    let png_large =
+        LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts_large).unwrap();
     assert_ne!(png_small, png_large);
 }
