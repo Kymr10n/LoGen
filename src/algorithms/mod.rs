@@ -9,6 +9,7 @@ use rand_chacha::ChaCha20Rng;
 use crate::core::seed::{derive_seed_32, normalize_input};
 use crate::{LogoGenError, Preset, RenderOptions};
 
+pub mod geometric_pattern;
 pub mod monogram_badge;
 
 /// Minimal scene graph for this stub.
@@ -27,6 +28,11 @@ pub enum DrawOp {
     ShapeFill {
         shape: crate::core::geometry::Shape,
         color: crate::core::palette::Rgb,
+    },
+    ShapeStroke {
+        shape: crate::core::geometry::Shape,
+        color: crate::core::palette::Rgb,
+        width: f32,
     },
     Text {
         text: String,
@@ -69,5 +75,6 @@ pub fn build_scene(
 
     match preset {
         Preset::MonogramBadge => monogram_badge::build(&normalized, &mut rng, opts),
+        Preset::GeometricPattern => geometric_pattern::build(&normalized, &mut rng, opts),
     }
 }

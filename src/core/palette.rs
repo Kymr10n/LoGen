@@ -84,6 +84,8 @@ pub struct Palette {
     pub background: Option<Rgb>,
     pub primary: Rgb,
     pub secondary: Rgb,
+    pub tertiary: Rgb,
+    pub text_color: Rgb,
 }
 
 pub fn derive_palette<R: Rng>(rng: &mut R, transparent_background: bool) -> Palette {
@@ -99,6 +101,30 @@ pub fn derive_palette<R: Rng>(rng: &mut R, transparent_background: bool) -> Pale
         (l * SECONDARY_LIGHTNESS_FACTOR).clamp(0.0, 1.0),
     );
 
+    // Tertiary color with different hue offset
+    let tertiary = hsl_to_rgb(
+        hue + rng.gen_range(120.0..200.0),
+        rng.gen_range(0.5..0.75),
+        rng.gen_range(0.4..0.6),
+    );
+
+    // Text color: high contrast (white or very dark)
+    let text_color = if l > 0.5 {
+        // Dark background = white text
+        Rgb {
+            r: 255,
+            g: 255,
+            b: 255,
+        }
+    } else {
+        // Light background = dark text
+        Rgb {
+            r: 30,
+            g: 30,
+            b: 40,
+        }
+    };
+
     let background = if transparent_background {
         None
     } else {
@@ -113,5 +139,7 @@ pub fn derive_palette<R: Rng>(rng: &mut R, transparent_background: bool) -> Pale
         background,
         primary,
         secondary,
+        tertiary,
+        text_color,
     }
 }

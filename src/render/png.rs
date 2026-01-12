@@ -3,7 +3,10 @@ use crate::core::geometry::Shape;
 use crate::{LogoGenError, RenderOptions};
 use ab_glyph::{FontRef, PxScale};
 use image::{ImageEncoder, Rgba, RgbaImage};
-use imageproc::drawing::{draw_filled_circle_mut, draw_filled_rect_mut, draw_text_mut};
+use imageproc::drawing::{
+    draw_filled_circle_mut, draw_filled_rect_mut, draw_hollow_circle_mut, draw_hollow_rect_mut,
+    draw_text_mut,
+};
 use imageproc::rect::Rect as IRect;
 use std::path::Path;
 
@@ -79,6 +82,49 @@ pub fn render_png(
                                     .of_size(rect.w as u32, rect.h as u32),
                                 rgba,
                             );
+                        }
+                    }
+                }
+            }
+            DrawOp::ShapeStroke {
+                shape,
+                color,
+                width,
+            } => {
+                let rgba = Rgba([color.r, color.g, color.b, 255]);
+                match shape {
+                    Shape::Circle(circ) => {
+                        draw_hollow_circle_mut(
+                            &mut img,
+                            (circ.cx as i32, circ.cy as i32),
+                            circ.r as i32,
+                            rgba,
+                        );
+                        // For thicker strokes, draw multiple circles
+                        let thick = *width as i32;
+                        for i in 1..thick {
+                            draw_hollow_circle_mut(
+                                &mut img,
+                                (circ.cx as i32, circ.cy as i32),
+                                (circ.r as i32) + i,
+                                rgba,
+                            );
+                        }
+                    }
+                    Shape::Rect { rect, rx, ry } => {
+                        // Simplified stroke for rectangles (no rounded corner stroking)
+                        if *rx == 0.0 && *ry == 0.0 {
+                            let thick = *width as i32;
+                            for i in 0..thick {
+                                draw_hollow_rect_mut(
+                                    &mut img,
+                                    IRect::at((rect.x as i32) - i, (rect.y as i32) - i).of_size(
+                                        (rect.w as u32) + (i as u32) * 2,
+                                        (rect.h as u32) + (i as u32) * 2,
+                                    ),
+                                    rgba,
+                                );
+                            }
                         }
                     }
                 }

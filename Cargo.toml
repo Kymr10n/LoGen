@@ -27,6 +27,11 @@ ab_glyph = "0.2"
 
 [dev-dependencies]
 pretty_assertions = "1.4"
+criterion = "0.5"
+
+[[bench]]
+name = "logo_bench"
+harness = false
 
 [features]
 # When `embed-font` is enabled (default), the LiberationSans font bytes are

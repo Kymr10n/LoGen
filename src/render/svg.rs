@@ -52,6 +52,30 @@ pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGe
                     out.push('\n');
                 }
             },
+            DrawOp::ShapeStroke {
+                shape,
+                color,
+                width,
+            } => match shape {
+                Shape::Circle(circ) => {
+                    out.push_str(&format!(
+                        r#"<circle cx="{:.2}" cy="{:.2}" r="{:.2}" stroke="{}" stroke-width="{:.2}" fill="none"/>"#,
+                        circ.cx,
+                        circ.cy,
+                        circ.r,
+                        color.to_hex(),
+                        width
+                    ));
+                    out.push('\n');
+                }
+                Shape::Rect { rect, rx, ry } => {
+                    out.push_str(&format!(
+                        r#"<rect x="{:.2}" y="{:.2}" width="{:.2}" height="{:.2}" rx="{:.2}" ry="{:.2}" stroke="{}" stroke-width="{:.2}" fill="none"/>"#,
+                        rect.x, rect.y, rect.w, rect.h, rx, ry, color.to_hex(), width
+                    ));
+                    out.push('\n');
+                }
+            },
             DrawOp::Text {
                 text,
                 x,

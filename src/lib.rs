@@ -48,13 +48,39 @@ impl Default for RenderOptions {
 pub enum Preset {
     /// Generates a badge with initials derived from the input.
     MonogramBadge,
+    /// Generates overlapping geometric shapes with a lettermark.
+    GeometricPattern,
 }
 
 impl Preset {
     pub fn id(&self) -> &'static str {
         match self {
             Preset::MonogramBadge => "monogram-badge",
+            Preset::GeometricPattern => "geometric-pattern",
         }
+    }
+
+    pub fn description(&self) -> &'static str {
+        match self {
+            Preset::MonogramBadge => {
+                "Rounded badge with centered initials extracted from input text"
+            }
+            Preset::GeometricPattern => {
+                "Overlapping geometric shapes (circles/rectangles) with centered lettermark"
+            }
+        }
+    }
+
+    pub fn category(&self) -> &'static str {
+        match self {
+            Preset::MonogramBadge => "Badge",
+            Preset::GeometricPattern => "Abstract",
+        }
+    }
+
+    /// Returns all available presets.
+    pub fn all() -> Vec<Preset> {
+        vec![Preset::MonogramBadge, Preset::GeometricPattern]
     }
 }
 
@@ -64,6 +90,7 @@ impl std::str::FromStr for Preset {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.trim().to_ascii_lowercase().as_str() {
             "monogram-badge" | "monogram" | "badge" => Ok(Preset::MonogramBadge),
+            "geometric-pattern" | "geometric" | "pattern" => Ok(Preset::GeometricPattern),
             _ => Err(LogoGenError::UnknownPreset(s.to_string())),
         }
     }
@@ -161,9 +188,10 @@ mod tests {
     #[test]
     fn preset_from_str_known() {
         let p: Preset = "monogram-badge".parse().expect("parse preset");
-        match p {
-            Preset::MonogramBadge => {}
-        }
+        assert!(matches!(p, Preset::MonogramBadge));
+
+        let p2: Preset = "geometric-pattern".parse().expect("parse preset");
+        assert!(matches!(p2, Preset::GeometricPattern));
     }
 
     #[test]

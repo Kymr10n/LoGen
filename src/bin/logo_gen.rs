@@ -24,9 +24,13 @@ impl From<FormatArg> for OutputFormat {
 #[command(name = "logo-gen")]
 #[command(about = "Deterministic logo generator (PNG + SVG) — stub", long_about = None)]
 struct Args {
+    /// List all available presets and exit.
+    #[arg(long)]
+    list_presets: bool,
+
     /// Input string used to generate the logo deterministically.
     #[arg(long)]
-    input: String,
+    input: Option<String>,
 
     /// Preset / algorithm identifier (e.g. monogram-badge).
     #[arg(long, default_value = "monogram-badge")]
@@ -38,7 +42,7 @@ struct Args {
 
     /// Output file path.
     #[arg(long)]
-    out: PathBuf,
+    out: Option<PathBuf>,
 
     /// Output size in pixels (PNG; also used as SVG dimensions).
     #[arg(long, default_value_t = 512)]
@@ -59,6 +63,21 @@ struct Args {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
+
+    if args.list_presets {
+        println!("Available presets:\n");
+        for preset in Preset::all() {
+            println!("  {} [{}]", preset.id(), preset.category());
+            println!("    {}", preset.description());
+            println!();
+        }
+        return Ok(());
+    }
+
+    let input = args
+        .input
+        .ok_or("--input is required (or use --list-presets)")?;
+    let out = args.out.ok_or("--out is required")?;
     let preset: Preset = args.preset.parse()?;
 
     let opts = RenderOptions {
@@ -68,13 +87,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         transparent_background: args.transparent,
     };
 
-    write_logo_file(
-        &args.input,
-        preset,
-        OutputFormat::from(args.format),
-        &args.out,
-        &opts,
-    )?;
+    write_logo_file(&input, preset, OutputFormat::from(args.format), &out, &opts)?;
 
     Ok(())
 }

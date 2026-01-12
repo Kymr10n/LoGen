@@ -7,6 +7,12 @@ use crate::{LogoGenError, RenderOptions};
 /// Probability of generating a circular badge instead of rounded rectangle.
 const CIRCLE_PROBABILITY: f64 = 0.35;
 
+/// Probability of adding a border/stroke to the badge.
+const BORDER_PROBABILITY: f64 = 0.5;
+
+/// Border width as fraction of shape size.
+const BORDER_WIDTH_FRACTION: f32 = 0.025;
+
 /// Minimum corner radius as fraction of badge width.
 const MIN_CORNER_RADIUS: f32 = 0.16;
 /// Maximum corner radius as fraction of badge width.
@@ -98,7 +104,8 @@ pub fn build<R: Rng>(
     let initials = initials_from_normalized(normalized);
     let font_size = rng.gen_range(MIN_FONT_SIZE..MAX_FONT_SIZE) * w;
 
-    let ops = vec![
+    let add_border = rng.gen_bool(BORDER_PROBABILITY);
+    let mut ops = vec![
         DrawOp::Background {
             color: palette.background,
         },
@@ -106,18 +113,29 @@ pub fn build<R: Rng>(
             shape: badge_shape,
             color: palette.primary,
         },
-        // Centered text. In SVG we can anchor-middle; in PNG it's a placeholder (no actual text rendering yet).
-        DrawOp::Text {
-            text: initials,
-            x: w / 2.0,
-            y: h / 2.0 + font_size * TEXT_BASELINE_ADJUST,
-            font_family: typo.family.to_string(),
-            font_weight: typo.weight,
-            font_size,
-            color: palette.secondary,
-            anchor_middle: true,
-        },
     ];
+
+    // Optionally add a border
+    if add_border {
+        let border_width = w * BORDER_WIDTH_FRACTION;
+        ops.push(DrawOp::ShapeStroke {
+            shape: badge_shape,
+            color: palette.tertiary,
+            width: border_width,
+        });
+    }
+
+    // Centered text
+    ops.push(DrawOp::Text {
+        text: initials,
+        x: w / 2.0,
+        y: h / 2.0 + font_size * TEXT_BASELINE_ADJUST,
+        font_family: typo.family.to_string(),
+        font_weight: typo.weight,
+        font_size,
+        color: palette.secondary,
+        anchor_middle: true,
+    });
 
     Ok(Scene {
         width: size,

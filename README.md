@@ -1,4 +1,4 @@
-# LoGen (Rust) — Project Stub
+# LoGen (Rust) — Deterministic Logo Generator
 
 ![CI](https://github.com/YOUR_USERNAME/LoGen/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/YOUR_USERNAME/LoGen/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/LoGen)
@@ -7,19 +7,27 @@ Deterministic logo generation from an input string with pluggable algorithms ("p
 
 **Note**: Font assets are not included in the repository. Run `./setup-assets.sh` to download them before building.
 
-This stub compiles and produces:
-- **SVG** output (vector-first, clean XML)
-- **PNG** output (full raster renderer with embedded fonts and text rendering)
+## Features
 
-Key features:
-- ✅ Deterministic generation (same input = same output)
-- ✅ Full text rendering with embedded Roboto Bold font
-- ✅ Rounded rectangles and circles with antialiasing
-- ✅ Color palette derivation from HSL
-- ✅ Monogram/initial extraction from input strings
-- ✅ Variant support for generating alternatives
+- ✅ **Deterministic generation** - Same input = same output, every time
+- ✅ **Multiple presets** - Badge, geometric patterns, and more
+- ✅ **SVG & PNG output** - Vector-first with high-quality raster rendering
+- ✅ **Full text rendering** - Embedded fonts with proper text layout
+- ✅ **Variant support** - Generate alternatives from the same input
+- ✅ **Transparent backgrounds** - Optional transparency for both formats
+- ✅ **Color science** - Palette generation with proper contrast
+- ✅ **Border/stroke support** - Optional borders for visual variety
 
-The focus is **architecture and extensibility**. Visual fidelity is functional and will be enhanced incrementally.
+## Available Presets
+
+List all presets:
+```bash
+cargo run --bin logo-gen -- --list-presets
+```
+
+**Current presets:**
+- **`monogram-badge`** - Rounded badge with centered initials (circles or rounded rectangles)
+- **`geometric-pattern`** - Overlapping geometric shapes with lettermark
 
 ## Requirements
 - Rust stable (edition 2021)
@@ -40,24 +48,38 @@ This will download the Roboto Bold font (~168KB) used for text rendering.
 cargo build
 ```
 
-## Run (CLI)
-Gen
+## Usage
 
-Generate with transparent background:
+**Generate SVG:**
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512 --transparent
+cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
 ```
 
-Generate variants (same input, different outputs):
+**Generate PNG:**
+```bash
+cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512
+```
+
+**With transparent background:**
+```bash
+cargo run --bin logo-gen -- --input "Acme Power" --preset geometric-pattern --format png --out ./acme.png --size 512 --transparent
+```
+
+**Generate variants (same input, different outputs):**
 ```bash
 cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v1.png --size 512 --variant 1
 cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v2.png --size 512 --variant 2
 ```
 
-Run demo script:
+**Try different presets:**
+```bash
+cargo run --bin logo-gen -- --input "Creative Studio" --preset geometric-pattern --format svg --out ./creative.svg
+```
+
+**Run demo script:**
 ```bash
 ./generate_examples.sh
-```erate SVG:
+```
 ```bash
 cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
 ```

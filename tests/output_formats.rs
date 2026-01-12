@@ -44,10 +44,13 @@ fn test_transparent_background_svg() {
         ..Default::default()
     };
     let svg = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).unwrap();
-    // Should not contain a background rect
-    let rect_count = svg.matches("<rect").count();
-    // Should have shape rect but not background rect
-    assert_eq!(rect_count, 1);
+    // Should not have a full-canvas background rect when transparent
+    // The full canvas rect has x="0" y="0" width="512" height="512"
+    let has_background = svg.contains(r#"<rect x="0" y="0" width="512" height="512""#);
+    assert!(
+        !has_background,
+        "Transparent background should not have canvas-filling rect"
+    );
 }
 
 #[test]
@@ -57,10 +60,8 @@ fn test_opaque_background_svg() {
         ..Default::default()
     };
     let svg = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).unwrap();
-    // Should contain background rect
-    let rect_count = svg.matches("<rect").count();
-    // Should have both background and shape rect
-    assert_eq!(rect_count, 2);
+    // Should contain background rect with full dimensions
+    assert!(svg.contains(r#"<rect x="0" y="0" width="512" height="512""#));
 }
 
 #[test]
