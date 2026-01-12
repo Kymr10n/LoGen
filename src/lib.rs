@@ -186,31 +186,270 @@ mod tests {
     use super::*;
 
     #[test]
-    fn preset_from_str_known() {
-        let p: Preset = "monogram-badge".parse().expect("parse preset");
-        assert!(matches!(p, Preset::MonogramBadge));
+    fn output_format_debug() {
+        let svg = OutputFormat::Svg;
+        let png = OutputFormat::Png;
+        assert_eq!(format!("{:?}", svg), "Svg");
+        assert_eq!(format!("{:?}", png), "Png");
+    }
 
-        let p2: Preset = "geometric-pattern".parse().expect("parse preset");
+    #[test]
+    fn output_format_clone() {
+        let svg = OutputFormat::Svg;
+        let cloned = svg;
+        assert!(matches!(cloned, OutputFormat::Svg));
+    }
+
+    #[test]
+    fn render_options_default() {
+        let opts = RenderOptions::default();
+        assert_eq!(opts.size_px, 512);
+        assert!((opts.padding_frac - 0.12).abs() < 0.001);
+        assert!(opts.variant.is_none());
+        assert!(!opts.transparent_background);
+    }
+
+    #[test]
+    fn render_options_clone() {
+        let opts = RenderOptions {
+            size_px: 256,
+            padding_frac: 0.15,
+            variant: Some(42),
+            transparent_background: true,
+        };
+        let cloned = opts.clone();
+        assert_eq!(cloned.size_px, 256);
+        assert!((cloned.padding_frac - 0.15).abs() < 0.001);
+        assert_eq!(cloned.variant, Some(42));
+        assert!(cloned.transparent_background);
+    }
+
+    #[test]
+    fn preset_debug() {
+        let mb = Preset::MonogramBadge;
+        let gp = Preset::GeometricPattern;
+        assert_eq!(format!("{:?}", mb), "MonogramBadge");
+        assert_eq!(format!("{:?}", gp), "GeometricPattern");
+    }
+
+    #[test]
+    fn preset_clone() {
+        let mb = Preset::MonogramBadge;
+        let cloned = mb;
+        assert!(matches!(cloned, Preset::MonogramBadge));
+    }
+
+    #[test]
+    fn preset_id() {
+        assert_eq!(Preset::MonogramBadge.id(), "monogram-badge");
+        assert_eq!(Preset::GeometricPattern.id(), "geometric-pattern");
+    }
+
+    #[test]
+    fn preset_description() {
+        let mb_desc = Preset::MonogramBadge.description();
+        assert!(mb_desc.contains("badge"));
+        assert!(mb_desc.contains("initials"));
+
+        let gp_desc = Preset::GeometricPattern.description();
+        assert!(gp_desc.contains("geometric"));
+        assert!(gp_desc.contains("shapes"));
+    }
+
+    #[test]
+    fn preset_category() {
+        assert_eq!(Preset::MonogramBadge.category(), "Badge");
+        assert_eq!(Preset::GeometricPattern.category(), "Abstract");
+    }
+
+    #[test]
+    fn preset_all() {
+        let presets = Preset::all();
+        assert_eq!(presets.len(), 2);
+        assert!(matches!(presets[0], Preset::MonogramBadge));
+        assert!(matches!(presets[1], Preset::GeometricPattern));
+    }
+
+    #[test]
+    fn preset_from_str_monogram_badge() {
+        let p1: Preset = "monogram-badge".parse().expect("parse");
+        assert!(matches!(p1, Preset::MonogramBadge));
+
+        let p2: Preset = "monogram".parse().expect("parse");
+        assert!(matches!(p2, Preset::MonogramBadge));
+
+        let p3: Preset = "badge".parse().expect("parse");
+        assert!(matches!(p3, Preset::MonogramBadge));
+
+        let p4: Preset = "MONOGRAM-BADGE".parse().expect("parse");
+        assert!(matches!(p4, Preset::MonogramBadge));
+
+        let p5: Preset = "  monogram  ".parse().expect("parse");
+        assert!(matches!(p5, Preset::MonogramBadge));
+    }
+
+    #[test]
+    fn preset_from_str_geometric_pattern() {
+        let p1: Preset = "geometric-pattern".parse().expect("parse");
+        assert!(matches!(p1, Preset::GeometricPattern));
+
+        let p2: Preset = "geometric".parse().expect("parse");
         assert!(matches!(p2, Preset::GeometricPattern));
+
+        let p3: Preset = "pattern".parse().expect("parse");
+        assert!(matches!(p3, Preset::GeometricPattern));
+
+        let p4: Preset = "GEOMETRIC-PATTERN".parse().expect("parse");
+        assert!(matches!(p4, Preset::GeometricPattern));
     }
 
     #[test]
     fn preset_from_str_unknown() {
         let r: Result<Preset, _> = "no-such-preset".parse();
         assert!(r.is_err());
+        if let Err(LogoGenError::UnknownPreset(name)) = r {
+            assert_eq!(name, "no-such-preset");
+        } else {
+            panic!("Expected UnknownPreset error");
+        }
     }
+
     #[test]
-    fn generate_svg_and_png_ok() {
+    fn error_display_unknown_preset() {
+        let err = LogoGenError::UnknownPreset("test".to_string());
+        assert_eq!(err.to_string(), "unknown preset: test");
+    }
+
+    #[test]
+    fn error_display_invalid_options() {
+        let err = LogoGenError::InvalidOptions("bad size".to_string());
+        assert_eq!(err.to_string(), "invalid options: bad size");
+    }
+
+    #[test]
+    fn error_display_render() {
+        let err = LogoGenError::Render("failed to draw".to_string());
+        assert_eq!(err.to_string(), "render error: failed to draw");
+    }
+
+    #[test]
+    fn error_debug() {
+        let err = LogoGenError::UnknownPreset("test".to_string());
+        let debug_str = format!("{:?}", err);
+        assert!(debug_str.contains("UnknownPreset"));
+    }
+
+    #[test]
+    fn generate_svg_monogram_badge() {
         let opts = RenderOptions::default();
         let svg =
             LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
-        assert!(
-            svg.contains("<svg") || svg.contains("<svg"),
-            "svg should contain svg tag"
-        );
+        assert!(svg.contains("<svg"));
+        assert!(svg.contains("</svg>"));
+    }
 
+    #[test]
+    fn generate_svg_geometric_pattern() {
+        let opts = RenderOptions::default();
+        let svg =
+            LogoGenerator::generate_svg("Test", Preset::GeometricPattern, &opts).expect("svg gen");
+        assert!(svg.contains("<svg"));
+        assert!(svg.contains("</svg>"));
+    }
+
+    #[test]
+    fn generate_svg_with_variant() {
+        let opts = RenderOptions {
+            variant: Some(42),
+            ..Default::default()
+        };
+        let svg =
+            LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        assert!(svg.contains("<svg"));
+    }
+
+    #[test]
+    fn generate_svg_transparent() {
+        let opts = RenderOptions {
+            transparent_background: true,
+            ..Default::default()
+        };
+        let svg =
+            LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        assert!(svg.contains("<svg"));
+    }
+
+    #[test]
+    fn generate_png_monogram_badge() {
+        let opts = RenderOptions::default();
         let png =
             LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
-        assert!(!png.is_empty(), "png bytes should not be empty");
+        assert!(!png.is_empty());
+        assert_eq!(&png[1..4], b"PNG");
+    }
+
+    #[test]
+    fn generate_png_geometric_pattern() {
+        let opts = RenderOptions::default();
+        let png =
+            LogoGenerator::generate_png("Test", Preset::GeometricPattern, &opts).expect("png gen");
+        assert!(!png.is_empty());
+        assert_eq!(&png[1..4], b"PNG");
+    }
+
+    #[test]
+    fn generate_png_with_variant() {
+        let opts = RenderOptions {
+            variant: Some(99),
+            ..Default::default()
+        };
+        let png =
+            LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        assert!(!png.is_empty());
+    }
+
+    #[test]
+    fn generate_png_with_font_none() {
+        let opts = RenderOptions::default();
+        let png = LogoGenerator::generate_png_with_font("Test", Preset::MonogramBadge, &opts, None)
+            .expect("png gen");
+        assert!(!png.is_empty());
+        assert_eq!(&png[1..4], b"PNG");
+    }
+
+    #[test]
+    fn generate_png_with_owned_font_none() {
+        let opts = RenderOptions::default();
+        let png =
+            LogoGenerator::generate_png_with_owned_font("Test", Preset::MonogramBadge, &opts, None)
+                .expect("png gen");
+        assert!(!png.is_empty());
+        assert_eq!(&png[1..4], b"PNG");
+    }
+
+    #[test]
+    fn generate_png_different_sizes() {
+        let sizes = [128, 256, 512, 1024];
+        for size in sizes {
+            let opts = RenderOptions {
+                size_px: size,
+                ..Default::default()
+            };
+            let png =
+                LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+            assert!(!png.is_empty());
+        }
+    }
+
+    #[test]
+    fn generate_png_with_padding() {
+        let opts = RenderOptions {
+            size_px: 256,
+            padding_frac: 0.2,
+            ..Default::default()
+        };
+        let png =
+            LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        assert!(!png.is_empty());
     }
 }
