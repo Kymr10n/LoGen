@@ -1,9 +1,8 @@
-use std::fs;
 use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
-use logo_gen::{LogoGenerator, OutputFormat, Preset, RenderOptions};
+use logo_gen::{OutputFormat, Preset, RenderOptions};
 use logo_gen::cli::write_logo_file;
 
 #[derive(Debug, Clone, ValueEnum)]

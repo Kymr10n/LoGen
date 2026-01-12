@@ -1,4 +1,4 @@
-use logo_gen::{algorithms, Preset, RenderOptions};
+use logo_gen::RenderOptions;
 use logo_gen::cli::debug_initials_svg;
 
 fn main() {

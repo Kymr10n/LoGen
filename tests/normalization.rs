@@ -34,3 +34,28 @@ fn test_normalize_empty() {
 fn test_normalize_whitespace_only() {
     assert_eq!(normalize_input("   \t\n  "), "");
 }
+
+#[test]
+fn test_normalize_mixed_punctuation() {
+    assert_eq!(normalize_input("Hello, World!"), "Hello, World!");
+}
+
+#[test]
+fn test_normalize_leading_trailing_mixed() {
+    assert_eq!(normalize_input("\n\t  Test  \r\n"), "Test");
+}
+
+#[test]
+fn test_normalize_numbers_preserved() {
+    assert_eq!(normalize_input("  Test 123  "), "Test 123");
+}
+
+#[test]
+fn test_normalize_emoji() {
+    assert_eq!(normalize_input("Hello 👋 World 🌍"), "Hello 👋 World 🌍");
+}
+
+#[test]
+fn test_normalize_consecutive_spaces() {
+    assert_eq!(normalize_input("a     b     c"), "a b c");
+}
