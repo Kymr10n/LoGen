@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use crate::{LogoGenError, LogoGenerator, OutputFormat, Preset, RenderOptions};
+use crate::{LoGen, LoGenError, OutputFormat, Preset, RenderOptions};
 
 /// Write a generated logo to `out_path` using provided format and options.
 pub fn write_logo_file(
@@ -13,11 +13,11 @@ pub fn write_logo_file(
 ) -> Result<(), Box<dyn std::error::Error>> {
     match format {
         OutputFormat::Svg => {
-            let svg = LogoGenerator::generate_svg(input, preset, opts)?;
+            let svg = LoGen::generate_svg(input, preset, opts)?;
             fs::write(out_path, svg)?;
         }
         OutputFormat::Png => {
-            let png = LogoGenerator::generate_png(input, preset, opts)?;
+            let png = LoGen::generate_png(input, preset, opts)?;
             fs::write(out_path, png)?;
         }
     }
@@ -25,7 +25,7 @@ pub fn write_logo_file(
 }
 
 /// Produce the SVG string used by the `debug_initials` binary.
-pub fn debug_initials_svg(input: &str, opts: &RenderOptions) -> Result<String, LogoGenError> {
+pub fn debug_initials_svg(input: &str, opts: &RenderOptions) -> Result<String, LoGenError> {
     let scene = crate::algorithms::build_scene(input, Preset::MonogramBadge, opts)?;
     crate::render::svg::render_svg(&scene, opts)
 }

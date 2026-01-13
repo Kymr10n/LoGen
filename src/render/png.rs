@@ -1,6 +1,6 @@
 use crate::algorithms::{DrawOp, Scene};
 use crate::core::geometry::Shape;
-use crate::{LogoGenError, RenderOptions};
+use crate::{LoGenError, RenderOptions};
 use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 use image::{ImageEncoder, Rgba, RgbaImage};
 use imageproc::drawing::{
@@ -20,7 +20,7 @@ pub fn render_png(
     scene: &Scene,
     _opts: &RenderOptions,
     font_bytes: Option<&[u8]>,
-) -> Result<Vec<u8>, LogoGenError> {
+) -> Result<Vec<u8>, LoGenError> {
     let mut img = RgbaImage::new(scene.width, scene.height);
 
     for px in img.pixels_mut() {
@@ -174,7 +174,7 @@ pub fn render_png(
                 scene.height,
                 image::ExtendedColorType::Rgba8,
             )
-            .map_err(|e: image::ImageError| LogoGenError::Render(e.to_string()))?;
+            .map_err(|e: image::ImageError| LoGenError::Render(e.to_string()))?;
     }
     Ok(buf)
 }

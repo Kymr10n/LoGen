@@ -1,6 +1,6 @@
 # gui-tauri
 
-This crate is a thin Tauri wrapper around the `logo_gen` library and the `frontend/` React app.
+This crate is a thin Tauri wrapper around the `LoGen` library and the `frontend/` React app.
 
 Development
 

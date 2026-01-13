@@ -1,7 +1,7 @@
 //! Benchmarks for logo generation performance
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use logen::{LogoGenerator, Preset, RenderOptions};
+use logen::{LoGen, Preset, RenderOptions};
 
 fn bench_svg_generation(c: &mut Criterion) {
     let mut group = c.benchmark_group("svg_generation");
@@ -13,7 +13,7 @@ fn bench_svg_generation(c: &mut Criterion) {
                 ..Default::default()
             };
             b.iter(|| {
-                LogoGenerator::generate_svg(
+                LoGen::generate_svg(
                     black_box("Test Company"),
                     black_box(Preset::MonogramBadge),
                     black_box(&opts),
@@ -27,7 +27,7 @@ fn bench_svg_generation(c: &mut Criterion) {
                 ..Default::default()
             };
             b.iter(|| {
-                LogoGenerator::generate_svg(
+                LoGen::generate_svg(
                     black_box("Test Company"),
                     black_box(Preset::GeometricPattern),
                     black_box(&opts),
@@ -49,7 +49,7 @@ fn bench_png_generation(c: &mut Criterion) {
                 ..Default::default()
             };
             b.iter(|| {
-                LogoGenerator::generate_png(
+                LoGen::generate_png(
                     black_box("Test Company"),
                     black_box(Preset::MonogramBadge),
                     black_box(&opts),
@@ -63,7 +63,7 @@ fn bench_png_generation(c: &mut Criterion) {
                 ..Default::default()
             };
             b.iter(|| {
-                LogoGenerator::generate_png(
+                LoGen::generate_png(
                     black_box("Test Company"),
                     black_box(Preset::GeometricPattern),
                     black_box(&opts),

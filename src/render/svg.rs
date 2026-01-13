@@ -1,6 +1,6 @@
 use crate::algorithms::{DrawOp, Scene};
 use crate::core::geometry::Shape;
-use crate::{LogoGenError, RenderOptions};
+use crate::{LoGenError, RenderOptions};
 
 fn esc(s: &str) -> String {
     s.replace('&', "&amp;")
@@ -10,7 +10,7 @@ fn esc(s: &str) -> String {
         .replace('\'', "&apos;")
 }
 
-pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGenError> {
+pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LoGenError> {
     let w = scene.width;
     let h = scene.height;
 

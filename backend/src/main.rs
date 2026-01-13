@@ -85,12 +85,12 @@ fn main() {
             // generate and respond
             let res = if format == "png" {
                 let owned_font = font.as_ref().map(|a| (**a).clone());
-                match logen::LogoGenerator::generate_png_with_owned_font(&payload.input, preset, &opts, owned_font) {
+                match logen::LoGen::generate_png_with_owned_font(&payload.input, preset, &opts, owned_font) {
                     Ok(bytes) => respond_with_cors(200, "image/png", bytes),
                     Err(e) => respond_with_cors(500, "text/plain", e.to_string().into_bytes()),
                 }
             } else if format == "svg" {
-                match logen::LogoGenerator::generate_svg(&payload.input, preset, &opts) {
+                match logen::LoGen::generate_svg(&payload.input, preset, &opts) {
                     Ok(svg) => respond_with_cors(200, "image/svg+xml;charset=utf-8", svg.into_bytes()),
                     Err(e) => respond_with_cors(500, "text/plain", e.to_string().into_bytes()),
                 }

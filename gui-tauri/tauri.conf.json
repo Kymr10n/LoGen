@@ -1,6 +1,6 @@
 {
   "package": {
-    "productName": "logo_gen_gui",
+    "productName": "LoGen",
     "version": "0.1.0"
   },
   "build": {

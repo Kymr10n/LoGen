@@ -7,7 +7,7 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha20Rng;
 
 use crate::core::seed::{derive_seed_32, normalize_input};
-use crate::{LogoGenError, Preset, RenderOptions};
+use crate::{LoGenError, Preset, RenderOptions};
 
 pub mod geometric_pattern;
 pub mod monogram_badge;
@@ -46,19 +46,15 @@ pub enum DrawOp {
     },
 }
 
-pub fn build_scene(
-    input: &str,
-    preset: Preset,
-    opts: &RenderOptions,
-) -> Result<Scene, LogoGenError> {
+pub fn build_scene(input: &str, preset: Preset, opts: &RenderOptions) -> Result<Scene, LoGenError> {
     if !(0.0..=0.5).contains(&opts.padding_frac) {
-        return Err(LogoGenError::InvalidOptions(format!(
+        return Err(LoGenError::InvalidOptions(format!(
             "padding_frac must be within [0.0..0.5], got {}",
             opts.padding_frac
         )));
     }
     if opts.size_px < 64 || opts.size_px > 8192 {
-        return Err(LogoGenError::InvalidOptions(format!(
+        return Err(LoGenError::InvalidOptions(format!(
             "size_px must be within [64..8192], got {}",
             opts.size_px
         )));
@@ -66,7 +62,7 @@ pub fn build_scene(
 
     let normalized = normalize_input(input);
     if normalized.is_empty() {
-        return Err(LogoGenError::InvalidOptions(
+        return Err(LoGenError::InvalidOptions(
             "input string is empty or contains only whitespace".into(),
         ));
     }

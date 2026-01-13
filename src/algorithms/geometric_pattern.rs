@@ -2,7 +2,7 @@ use rand::Rng;
 
 use super::{DrawOp, Scene};
 use crate::core::{geometry, palette, typography};
-use crate::{LogoGenError, RenderOptions};
+use crate::{LoGenError, RenderOptions};
 
 /// Probability of using circles instead of rectangles.
 const CIRCLE_PROBABILITY: f64 = 0.4;
@@ -25,7 +25,7 @@ pub fn build<R: Rng>(
     normalized: &str,
     rng: &mut R,
     opts: &RenderOptions,
-) -> Result<Scene, LogoGenError> {
+) -> Result<Scene, LoGenError> {
     let size = opts.size_px;
     let w = size as f32;
     let h = size as f32;

@@ -1,4 +1,4 @@
-use logen::{LogoGenerator, Preset, RenderOptions};
+use logen::{LoGen, Preset, RenderOptions};
 use std::fs;
 
 /// Golden test: ensures output remains stable across code changes.
@@ -14,8 +14,8 @@ fn test_monogram_badge_golden_svg() {
         transparent_background: false,
     };
 
-    let svg = LogoGenerator::generate_svg("Acme Corp", Preset::MonogramBadge, &opts)
-        .expect("svg generation");
+    let svg =
+        LoGen::generate_svg("Acme Corp", Preset::MonogramBadge, &opts).expect("svg generation");
 
     let golden_path = format!("{}/monogram_badge_256.svg", GOLDEN_DIR);
 
@@ -42,8 +42,8 @@ fn test_geometric_pattern_golden_svg() {
         transparent_background: false,
     };
 
-    let svg = LogoGenerator::generate_svg("TestCo", Preset::GeometricPattern, &opts)
-        .expect("svg generation");
+    let svg =
+        LoGen::generate_svg("TestCo", Preset::GeometricPattern, &opts).expect("svg generation");
 
     let golden_path = format!("{}/geometric_pattern_256.svg", GOLDEN_DIR);
 

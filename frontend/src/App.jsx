@@ -48,7 +48,7 @@ export default function App() {
   return (
     <div className="app-root">
       <header>
-        <h1>logo_gen — Frontend</h1>
+        <h1>LoGen</h1>
       </header>
       <main className="two-col">
         <section className="params">

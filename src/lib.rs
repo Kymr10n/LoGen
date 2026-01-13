@@ -85,20 +85,20 @@ impl Preset {
 }
 
 impl std::str::FromStr for Preset {
-    type Err = LogoGenError;
+    type Err = LoGenError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.trim().to_ascii_lowercase().as_str() {
             "monogram-badge" | "monogram" | "badge" => Ok(Preset::MonogramBadge),
             "geometric-pattern" | "geometric" | "pattern" => Ok(Preset::GeometricPattern),
-            _ => Err(LogoGenError::UnknownPreset(s.to_string())),
+            _ => Err(LoGenError::UnknownPreset(s.to_string())),
         }
     }
 }
 
 /// Errors that can occur during logo generation.
 #[derive(Debug, Error)]
-pub enum LogoGenError {
+pub enum LoGenError {
     /// The requested preset identifier is not recognized.
     #[error("unknown preset: {0}")]
     UnknownPreset(String),
@@ -114,9 +114,9 @@ pub enum LogoGenError {
 }
 
 /// Main entry point for generating logos.
-pub struct LogoGenerator;
+pub struct LoGen;
 
-impl LogoGenerator {
+impl LoGen {
     /// Generate an SVG logo from the input string.
     ///
     /// # Arguments
@@ -130,7 +130,7 @@ impl LogoGenerator {
         input: &str,
         preset: Preset,
         opts: &RenderOptions,
-    ) -> Result<String, LogoGenError> {
+    ) -> Result<String, LoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
         render::svg::render_svg(&scene, opts)
     }
@@ -148,7 +148,7 @@ impl LogoGenerator {
         input: &str,
         preset: Preset,
         opts: &RenderOptions,
-    ) -> Result<Vec<u8>, LogoGenError> {
+    ) -> Result<Vec<u8>, LoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
         // Forward to the new API that accepts an optional embedded font.
         render::png::render_png(&scene, opts, None)
@@ -163,7 +163,7 @@ impl LogoGenerator {
         preset: Preset,
         opts: &RenderOptions,
         font_bytes: Option<&[u8]>,
-    ) -> Result<Vec<u8>, LogoGenError> {
+    ) -> Result<Vec<u8>, LoGenError> {
         let scene = algorithms::build_scene(input, preset, opts)?;
         render::png::render_png(&scene, opts, font_bytes)
     }
@@ -175,7 +175,7 @@ impl LogoGenerator {
         preset: Preset,
         opts: &RenderOptions,
         font_bytes: Option<Vec<u8>>,
-    ) -> Result<Vec<u8>, LogoGenError> {
+    ) -> Result<Vec<u8>, LoGenError> {
         let fb_ref = font_bytes.as_deref();
         Self::generate_png_with_font(input, preset, opts, fb_ref)
     }
@@ -307,7 +307,7 @@ mod tests {
     fn preset_from_str_unknown() {
         let r: Result<Preset, _> = "no-such-preset".parse();
         assert!(r.is_err());
-        if let Err(LogoGenError::UnknownPreset(name)) = r {
+        if let Err(LoGenError::UnknownPreset(name)) = r {
             assert_eq!(name, "no-such-preset");
         } else {
             panic!("Expected UnknownPreset error");
@@ -316,25 +316,25 @@ mod tests {
 
     #[test]
     fn error_display_unknown_preset() {
-        let err = LogoGenError::UnknownPreset("test".to_string());
+        let err = LoGenError::UnknownPreset("test".to_string());
         assert_eq!(err.to_string(), "unknown preset: test");
     }
 
     #[test]
     fn error_display_invalid_options() {
-        let err = LogoGenError::InvalidOptions("bad size".to_string());
+        let err = LoGenError::InvalidOptions("bad size".to_string());
         assert_eq!(err.to_string(), "invalid options: bad size");
     }
 
     #[test]
     fn error_display_render() {
-        let err = LogoGenError::Render("failed to draw".to_string());
+        let err = LoGenError::Render("failed to draw".to_string());
         assert_eq!(err.to_string(), "render error: failed to draw");
     }
 
     #[test]
     fn error_debug() {
-        let err = LogoGenError::UnknownPreset("test".to_string());
+        let err = LoGenError::UnknownPreset("test".to_string());
         let debug_str = format!("{:?}", err);
         assert!(debug_str.contains("UnknownPreset"));
     }
@@ -342,8 +342,7 @@ mod tests {
     #[test]
     fn generate_svg_monogram_badge() {
         let opts = RenderOptions::default();
-        let svg =
-            LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        let svg = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
         assert!(svg.contains("<svg"));
         assert!(svg.contains("</svg>"));
     }
@@ -351,8 +350,7 @@ mod tests {
     #[test]
     fn generate_svg_geometric_pattern() {
         let opts = RenderOptions::default();
-        let svg =
-            LogoGenerator::generate_svg("Test", Preset::GeometricPattern, &opts).expect("svg gen");
+        let svg = LoGen::generate_svg("Test", Preset::GeometricPattern, &opts).expect("svg gen");
         assert!(svg.contains("<svg"));
         assert!(svg.contains("</svg>"));
     }
@@ -363,8 +361,7 @@ mod tests {
             variant: Some(42),
             ..Default::default()
         };
-        let svg =
-            LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        let svg = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
         assert!(svg.contains("<svg"));
     }
 
@@ -374,16 +371,14 @@ mod tests {
             transparent_background: true,
             ..Default::default()
         };
-        let svg =
-            LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
+        let svg = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts).expect("svg gen");
         assert!(svg.contains("<svg"));
     }
 
     #[test]
     fn generate_png_monogram_badge() {
         let opts = RenderOptions::default();
-        let png =
-            LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        let png = LoGen::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
         assert!(!png.is_empty());
         assert_eq!(&png[1..4], b"PNG");
     }
@@ -391,8 +386,7 @@ mod tests {
     #[test]
     fn generate_png_geometric_pattern() {
         let opts = RenderOptions::default();
-        let png =
-            LogoGenerator::generate_png("Test", Preset::GeometricPattern, &opts).expect("png gen");
+        let png = LoGen::generate_png("Test", Preset::GeometricPattern, &opts).expect("png gen");
         assert!(!png.is_empty());
         assert_eq!(&png[1..4], b"PNG");
     }
@@ -403,15 +397,14 @@ mod tests {
             variant: Some(99),
             ..Default::default()
         };
-        let png =
-            LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        let png = LoGen::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
         assert!(!png.is_empty());
     }
 
     #[test]
     fn generate_png_with_font_none() {
         let opts = RenderOptions::default();
-        let png = LogoGenerator::generate_png_with_font("Test", Preset::MonogramBadge, &opts, None)
+        let png = LoGen::generate_png_with_font("Test", Preset::MonogramBadge, &opts, None)
             .expect("png gen");
         assert!(!png.is_empty());
         assert_eq!(&png[1..4], b"PNG");
@@ -420,9 +413,8 @@ mod tests {
     #[test]
     fn generate_png_with_owned_font_none() {
         let opts = RenderOptions::default();
-        let png =
-            LogoGenerator::generate_png_with_owned_font("Test", Preset::MonogramBadge, &opts, None)
-                .expect("png gen");
+        let png = LoGen::generate_png_with_owned_font("Test", Preset::MonogramBadge, &opts, None)
+            .expect("png gen");
         assert!(!png.is_empty());
         assert_eq!(&png[1..4], b"PNG");
     }
@@ -435,8 +427,7 @@ mod tests {
                 size_px: size,
                 ..Default::default()
             };
-            let png =
-                LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+            let png = LoGen::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
             assert!(!png.is_empty());
         }
     }
@@ -448,8 +439,7 @@ mod tests {
             padding_frac: 0.2,
             ..Default::default()
         };
-        let png =
-            LogoGenerator::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
+        let png = LoGen::generate_png("Test", Preset::MonogramBadge, &opts).expect("png gen");
         assert!(!png.is_empty());
     }
 }

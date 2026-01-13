@@ -1,6 +1,6 @@
 # backend
 
-Tiny HTTP backend exposing the `logo_gen` functionality for integration with frontends.
+Tiny HTTP backend exposing the `LoGen` functionality for integration with frontends.
 
 Run locally:
 

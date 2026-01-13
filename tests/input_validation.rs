@@ -1,17 +1,17 @@
-use logen::{LogoGenError, LogoGenerator, Preset, RenderOptions};
+use logen::{LoGen, LoGenError, Preset, RenderOptions};
 
 #[test]
 fn test_empty_input() {
     let opts = RenderOptions::default();
-    let result = LogoGenerator::generate_svg("", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
 fn test_whitespace_only_input() {
     let opts = RenderOptions::default();
-    let result = LogoGenerator::generate_svg("   \t\n  ", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("   \t\n  ", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
@@ -20,8 +20,8 @@ fn test_padding_too_large() {
         padding_frac: 0.6,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
@@ -30,8 +30,8 @@ fn test_padding_negative() {
         padding_frac: -0.1,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
@@ -40,8 +40,8 @@ fn test_size_too_small() {
         size_px: 32,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
@@ -50,8 +50,8 @@ fn test_size_too_large() {
         size_px: 10000,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
-    assert!(matches!(result, Err(LogoGenError::InvalidOptions(_))));
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
+    assert!(matches!(result, Err(LoGenError::InvalidOptions(_))));
 }
 
 #[test]
@@ -60,7 +60,7 @@ fn test_valid_edge_case_padding() {
         padding_frac: 0.5,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
     assert!(result.is_ok());
 }
 
@@ -70,7 +70,7 @@ fn test_valid_edge_case_size_min() {
         size_px: 64,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
     assert!(result.is_ok());
 }
 
@@ -80,6 +80,6 @@ fn test_valid_edge_case_size_max() {
         size_px: 8192,
         ..Default::default()
     };
-    let result = LogoGenerator::generate_svg("Test", Preset::MonogramBadge, &opts);
+    let result = LoGen::generate_svg("Test", Preset::MonogramBadge, &opts);
     assert!(result.is_ok());
 }
