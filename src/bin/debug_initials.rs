@@ -1,5 +1,5 @@
-use logo_gen::cli::debug_initials_svg;
-use logo_gen::RenderOptions;
+use logen::cli::debug_initials_svg;
+use logen::RenderOptions;
 
 fn main() {
     let input = "ABR";

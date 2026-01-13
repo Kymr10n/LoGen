@@ -88,7 +88,7 @@ pub fn render_svg(scene: &Scene, _opts: &RenderOptions) -> Result<String, LogoGe
             } => {
                 let anchor = if *anchor_middle { "middle" } else { "start" };
                 out.push_str(&format!(
-                    r#"<text x="{:.2}" y="{:.2}" text-anchor="{anchor}" font-family="{}" font-weight="{}" font-size="{:.2}" fill="{}">{}</text>"#,
+                    r#"<text x="{:.2}" y="{:.2}" text-anchor="{anchor}" dominant-baseline="middle" font-family="{}" font-weight="{}" font-size="{:.2}" fill="{}">{}</text>"#,
                     x, y, esc(font_family), font_weight, font_size, color.to_hex(), esc(text)
                 ));
                 out.push('\n');

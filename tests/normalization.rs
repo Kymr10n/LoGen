@@ -1,4 +1,4 @@
-use logo_gen::core::seed::normalize_input;
+use logen::core::seed::normalize_input;
 
 #[test]
 fn test_normalize_trims_whitespace() {

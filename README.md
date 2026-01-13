@@ -22,7 +22,7 @@ Deterministic logo generation from an input string with pluggable algorithms ("p
 
 List all presets:
 ```bash
-cargo run --bin logo-gen -- --list-presets
+cargo run --bin LoGen -- --list-presets
 ```
 
 **Current presets:**
@@ -52,28 +52,28 @@ cargo build
 
 **Generate SVG:**
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
+cargo run --bin LoGen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
 ```
 
 **Generate PNG:**
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512
+cargo run --bin LoGen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512
 ```
 
 **With transparent background:**
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset geometric-pattern --format png --out ./acme.png --size 512 --transparent
+cargo run --bin LoGen -- --input "Acme Power" --preset geometric-pattern --format png --out ./acme.png --size 512 --transparent
 ```
 
 **Generate variants (same input, different outputs):**
 ```bash
-cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v1.png --size 512 --variant 1
-cargo run --bin logo-gen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v2.png --size 512 --variant 2
+cargo run --bin LoGen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v1.png --size 512 --variant 1
+cargo run --bin LoGen -- --input "Brand X" --preset monogram-badge --format png --out ./brand_v2.png --size 512 --variant 2
 ```
 
 **Try different presets:**
 ```bash
-cargo run --bin logo-gen -- --input "Creative Studio" --preset geometric-pattern --format svg --out ./creative.svg
+cargo run --bin LoGen -- --input "Creative Studio" --preset geometric-pattern --format svg --out ./creative.svg
 ```
 
 **Run demo script:**
@@ -81,12 +81,12 @@ cargo run --bin logo-gen -- --input "Creative Studio" --preset geometric-pattern
 ./generate_examples.sh
 ```
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
+cargo run --bin LoGen -- --input "Acme Power" --preset monogram-badge --format svg --out ./acme.svg
 ```
 
 Generate PNG:
 ```bash
-cargo run --bin logo-gen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512
+cargo run --bin LoGen -- --input "Acme Power" --preset monogram-badge --format png --out ./acme.png --size 512
 ```
 
 ## Visual Studio / VS Code

@@ -1,4 +1,4 @@
-use logo_gen::Preset;
+use logen::Preset;
 use std::str::FromStr;
 
 #[test]

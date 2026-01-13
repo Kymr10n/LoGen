@@ -1,4 +1,4 @@
-use logo_gen::{LogoGenerator, Preset, RenderOptions};
+use logen::{LogoGenerator, Preset, RenderOptions};
 use std::fs;
 
 /// Golden test: ensures output remains stable across code changes.

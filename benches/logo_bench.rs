@@ -1,7 +1,7 @@
 //! Benchmarks for logo generation performance
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use logo_gen::{LogoGenerator, Preset, RenderOptions};
+use logen::{LogoGenerator, Preset, RenderOptions};
 
 fn bench_svg_generation(c: &mut Criterion) {
     let mut group = c.benchmark_group("svg_generation");

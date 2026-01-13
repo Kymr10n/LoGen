@@ -1,4 +1,4 @@
-use logo_gen::core::seed::{derive_seed_32, derive_seed_u64};
+use logen::core::seed::{derive_seed_32, derive_seed_u64};
 
 #[test]
 fn test_seed_deterministic() {

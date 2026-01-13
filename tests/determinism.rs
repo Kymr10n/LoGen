@@ -1,4 +1,4 @@
-use logo_gen::{LogoGenerator, Preset, RenderOptions};
+use logen::{LogoGenerator, Preset, RenderOptions};
 
 #[test]
 fn svg_is_deterministic_for_same_input() {

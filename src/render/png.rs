@@ -1,7 +1,7 @@
 use crate::algorithms::{DrawOp, Scene};
 use crate::core::geometry::Shape;
 use crate::{LogoGenError, RenderOptions};
-use ab_glyph::{FontRef, PxScale};
+use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 use image::{ImageEncoder, Rgba, RgbaImage};
 use imageproc::drawing::{
     draw_filled_circle_mut, draw_filled_rect_mut, draw_hollow_circle_mut, draw_hollow_rect_mut,
@@ -142,11 +142,21 @@ pub fn render_png(
                 if let Some(ref font) = font {
                     let scale = PxScale::from(*font_size);
                     let rgba = Rgba([color.r, color.g, color.b, 255]);
+
+                    // Calculate text position with vertical centering to match SVG's dominant-baseline="middle"
+                    let scaled_font = font.as_scaled(scale);
+                    let ascent = scaled_font.ascent();
+                    let descent = scaled_font.descent();
+                    let text_height = ascent - descent;
+
                     let (text_x, text_y) = if *anchor_middle {
                         let text_width = measure_text_width(font, scale, text);
-                        ((x - text_width / 2.0) as i32, (y - font_size * 0.35) as i32)
+                        (
+                            (x - text_width / 2.0) as i32,
+                            (y - text_height / 2.0 - descent) as i32,
+                        )
                     } else {
-                        (*x as i32, *y as i32)
+                        (*x as i32, (y - text_height / 2.0 - descent) as i32)
                     };
                     draw_text_mut(&mut img, rgba, text_x, text_y, scale, &font, text);
                 }

@@ -1,0 +1,213 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "rust-analyzer.linkedProjects": ["Cargo.toml", "backend/Cargo.toml"],
+    "rust-analyzer.check.command": "clippy"
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build: Workspace",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["build"],
+        "problemMatcher": ["$rustc"],
+        "group": "build"
+      },
+      {
+        "label": "Test: All",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["test"],
+        "problemMatcher": ["$rustc"],
+        "group": "test"
+      },
+      {
+        "label": "Run: Backend Server",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["run"],
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "isBackground": true,
+        "problemMatcher": {
+          "pattern": {
+            "regexp": "^(.*)$",
+            "file": 1
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^Compiling",
+            "endsPattern": "backend listening"
+          }
+        },
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "Run: Frontend Dev Server",
+        "type": "shell",
+        "command": "docker",
+        "args": [
+          "run",
+          "--rm",
+          "-p",
+          "5173:5173",
+          "-v",
+          "${workspaceFolder}/frontend/src:/app/src",
+          "-v",
+          "${workspaceFolder}/frontend/index.html:/app/index.html",
+          "-v",
+          "${workspaceFolder}/frontend/vite.config.js:/app/vite.config.js",
+          "--name",
+          "logen-frontend-dev",
+          "logen-frontend"
+        ],
+        "isBackground": true,
+        "problemMatcher": {
+          "pattern": {
+            "regexp": "^(.*)$",
+            "file": 1
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "VITE",
+            "endsPattern": "Local:"
+          }
+        },
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "Build: Frontend Docker Image",
+        "type": "shell",
+        "command": "docker",
+        "args": ["build", "-t", "logen-frontend", "."],
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Run: CLI Logo Generator",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["run", "--bin", "LoGen", "--", "--help"],
+        "problemMatcher": ["$rustc"],
+        "group": "none"
+      },
+      {
+        "label": "Stop: Backend Server",
+        "type": "shell",
+        "command": "pkill",
+        "args": ["-f", "backend"],
+        "problemMatcher": []
+      },
+      {
+        "label": "Stop: Frontend Dev Server",
+        "type": "shell",
+        "command": "docker",
+        "args": ["stop", "logen-frontend-dev"],
+        "problemMatcher": []
+      },
+      {
+        "label": "Restart: Backend Server",
+        "dependsOrder": "sequence",
+        "dependsOn": ["Stop: Backend Server", "Run: Backend Server"],
+        "problemMatcher": []
+      },
+      {
+        "label": "Run: All Services",
+        "dependsOn": ["Run: Backend Server", "Run: Frontend Dev Server"],
+        "problemMatcher": []
+      },
+      {
+        "label": "Clippy: Check All",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"],
+        "problemMatcher": ["$rustc"]
+      },
+      {
+        "label": "Format: Check",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["fmt", "--check"],
+        "problemMatcher": []
+      },
+      {
+        "label": "Benchmark: Run",
+        "type": "shell",
+        "command": "cargo",
+        "args": ["bench"],
+        "problemMatcher": []
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Debug: Backend Server",
+        "cargo": {
+          "args": ["build", "--manifest-path=backend/Cargo.toml"],
+          "filter": {
+            "name": "backend",
+            "kind": "bin"
+          }
+        },
+        "args": [],
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Debug: CLI LoGen",
+        "cargo": {
+          "args": ["build", "--bin=LoGen"],
+          "filter": {
+            "name": "LoGen",
+            "kind": "bin"
+          }
+        },
+        "args": ["--input", "test", "--preset", "monogram-badge", "--out", "/tmp/test.svg"],
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Debug: Unit Tests",
+        "cargo": {
+          "args": ["test", "--no-run", "--lib"],
+          "filter": {
+            "name": "logen",
+            "kind": "lib"
+          }
+        },
+        "args": [],
+        "cwd": "${workspaceFolder}"
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "rust-lang.rust-analyzer",
+      "vadimcn.vscode-lldb",
+      "tamasfe.even-better-toml",
+      "serayuzgur.crates",
+      "ms-vscode.vscode-typescript-next"
+    ]
+  }
+}

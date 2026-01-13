@@ -66,7 +66,7 @@ fn main() {
             };
 
             // parse preset
-            let preset = match payload.preset.as_deref().unwrap_or("monogram-badge").parse::<logo_gen::Preset>() {
+            let preset = match payload.preset.as_deref().unwrap_or("monogram-badge").parse::<logen::Preset>() {
                 Ok(p) => p,
                 Err(e) => {
                     let _ = request.respond(respond_with_cors(400, "text/plain", e.to_string().into_bytes()));
@@ -74,7 +74,7 @@ fn main() {
                 }
             };
 
-            let mut opts = logo_gen::RenderOptions::default();
+            let mut opts = logen::RenderOptions::default();
             if let Some(size) = payload.size_px { opts.size_px = size; }
             if let Some(pad) = payload.padding_frac { opts.padding_frac = pad; }
             if let Some(v) = payload.variant { opts.variant = Some(v); }
@@ -85,12 +85,12 @@ fn main() {
             // generate and respond
             let res = if format == "png" {
                 let owned_font = font.as_ref().map(|a| (**a).clone());
-                match logo_gen::LogoGenerator::generate_png_with_owned_font(&payload.input, preset, &opts, owned_font) {
+                match logen::LogoGenerator::generate_png_with_owned_font(&payload.input, preset, &opts, owned_font) {
                     Ok(bytes) => respond_with_cors(200, "image/png", bytes),
                     Err(e) => respond_with_cors(500, "text/plain", e.to_string().into_bytes()),
                 }
             } else if format == "svg" {
-                match logo_gen::LogoGenerator::generate_svg(&payload.input, preset, &opts) {
+                match logen::LogoGenerator::generate_svg(&payload.input, preset, &opts) {
                     Ok(svg) => respond_with_cors(200, "image/svg+xml;charset=utf-8", svg.into_bytes()),
                     Err(e) => respond_with_cors(500, "text/plain", e.to_string().into_bytes()),
                 }

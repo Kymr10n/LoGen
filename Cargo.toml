@@ -1,5 +1,5 @@
 [package]
-name = "logo_gen"
+name = "logen"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -8,12 +8,12 @@ repository = "https://example.invalid/replace-me"
 readme = "README.md"
 
 [lib]
-name = "logo_gen"
+name = "logen"
 path = "src/lib.rs"
 
 [[bin]]
-name = "logo-gen"
-path = "src/bin/logo_gen.rs"
+name = "LoGen"
+path = "src/bin/logen.rs"
 
 [dependencies]
 blake3 = "1.5"

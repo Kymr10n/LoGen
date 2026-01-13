@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
-use logo_gen::cli::write_logo_file;
-use logo_gen::{OutputFormat, Preset, RenderOptions};
+use logen::cli::write_logo_file;
+use logen::{OutputFormat, Preset, RenderOptions};
 
 #[derive(Debug, Clone, ValueEnum)]
 enum FormatArg {
@@ -21,8 +21,8 @@ impl From<FormatArg> for OutputFormat {
 }
 
 #[derive(Parser, Debug)]
-#[command(name = "logo-gen")]
-#[command(about = "Deterministic logo generator (PNG + SVG) — stub", long_about = None)]
+#[command(name = "LoGen")]
+#[command(about = "Deterministic logo generator (PNG + SVG)", long_about = None)]
 struct Args {
     /// List all available presets and exit.
     #[arg(long)]

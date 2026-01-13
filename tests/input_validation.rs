@@ -1,4 +1,4 @@
-use logo_gen::{LogoGenError, LogoGenerator, Preset, RenderOptions};
+use logen::{LogoGenError, LogoGenerator, Preset, RenderOptions};
 
 #[test]
 fn test_empty_input() {
